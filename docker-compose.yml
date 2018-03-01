@@ -1,0 +1,53 @@
+version: '3.3'
+
+services:
+  contact-discovery:
+    image: contact-discovery:latest
+    depends_on:
+      - elasticsearch
+      - mongo
+    environment:
+      - MONGODB_USERNAME=${MONGODB_USERNAME}
+      - MONGODB_PASSWORD=${MONGODB_PASSWORD}
+      - MONGODB_DATABASE=${MONGODB_DATABASE}
+      - WAIT_HOSTS=elasticsearch:9200,mongo:27017
+    ports:
+      - "8080:8080"
+
+  elasticsearch:
+    image: elasticsearch:latest
+    command: elasticsearch
+    healthcheck:
+      test: ["CMD-SHELL", "curl --silent --fail localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+
+#  mongo_connector:
+#    build:
+#      ./mongo-connector
+#    image: mongo-connector:latest
+#    depends_on:
+#      - mongo
+#      - elasticsearch
+#    environment:
+#      - MONGODB_USERNAME=admin
+#      - MONGODB_PASSWORD=admin123
+#      - WAIT_HOSTS=elasticsearch:9200,mongo:27017
+
+#  mongo:
+#    image: mongo:latest
+#    ports:
+#      - 27017:27017
+
+  mongo:
+    image: aashreys/mongo-auth:latest
+    environment:
+      - AUTH=yes
+      - MONGODB_ADMIN_USER=admin
+      - MONGODB_ADMIN_PASS=admin123
+      - MONGODB_APPLICATION_DATABASE=${MONGODB_DATABASE}
+      - MONGODB_APPLICATION_USER=${MONGODB_USERNAME}
+      - MONGODB_APPLICATION_PASS=${MONGODB_PASSWORD}
+    ports:
+      - "27017:27017"
