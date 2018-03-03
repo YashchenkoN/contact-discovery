@@ -23,25 +23,20 @@ services:
       timeout: 30s
       retries: 3
 
-#  mongo_connector:
-#    build:
-#      ./mongo-connector
-#    image: mongo-connector:latest
-#    depends_on:
-#      - mongo
-#      - elasticsearch
-#    environment:
-#      - MONGODB_USERNAME=admin
-#      - MONGODB_PASSWORD=admin123
-#      - WAIT_HOSTS=elasticsearch:9200,mongo:27017
-
-#  mongo:
-#    image: mongo:latest
-#    ports:
-#      - 27017:27017
+  mongo_connector:
+    build:
+      ./mongo-connector
+    depends_on:
+      - mongo
+      - elasticsearch
+    environment:
+      - MONGODB_USERNAME=admin
+      - MONGODB_PASSWORD=admin123
+      - WAIT_HOSTS=elasticsearch:9200,mongo:27017
 
   mongo:
-    image: aashreys/mongo-auth:latest
+    build:
+      ./mongo
     environment:
       - AUTH=yes
       - MONGODB_ADMIN_USER=admin
@@ -49,5 +44,6 @@ services:
       - MONGODB_APPLICATION_DATABASE=${MONGODB_DATABASE}
       - MONGODB_APPLICATION_USER=${MONGODB_USERNAME}
       - MONGODB_APPLICATION_PASS=${MONGODB_PASSWORD}
+      - REPL_SET=rs0
     ports:
       - "27017:27017"

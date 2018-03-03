@@ -1,5 +1,6 @@
 FROM python:3.4.3
-MAINTAINER vkont4@github.com
+
+MAINTAINER <Mykola Yashchenko> vkont4@gmail.com
 
 VOLUME /data
 
@@ -12,8 +13,7 @@ ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.0.0/wait
 
 RUN chmod a+x /usr/bin/mongo
 RUN chmod +x /wait
-RUN pip install elastic2-doc-manager[elastic5]
-RUN pip install mongo-connector[elastic5]
+RUN pip install mongo-connector[elastic5] elastic2-doc-manager[elastic5]
 
 CMD ["/bin/bash", "/tmp/startup.sh"]
 
