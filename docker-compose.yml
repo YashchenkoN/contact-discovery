@@ -7,9 +7,6 @@ services:
       - elasticsearch
       - mongo
     environment:
-      - MONGODB_USERNAME=${MONGODB_USERNAME}
-      - MONGODB_PASSWORD=${MONGODB_PASSWORD}
-      - MONGODB_DATABASE=${MONGODB_DATABASE}
       - WAIT_HOSTS=elasticsearch:9200,mongo:27017
     ports:
       - "8080:8080"
@@ -17,6 +14,8 @@ services:
   elasticsearch:
     image: elasticsearch:latest
     command: elasticsearch
+    environment:
+      - action.auto_create_index=true
     healthcheck:
       test: ["CMD-SHELL", "curl --silent --fail localhost:9200/_cluster/health || exit 1"]
       interval: 30s
@@ -30,20 +29,10 @@ services:
       - mongo
       - elasticsearch
     environment:
-      - MONGODB_USERNAME=admin
-      - MONGODB_PASSWORD=admin123
       - WAIT_HOSTS=elasticsearch:9200,mongo:27017
 
   mongo:
-    build:
-      ./mongo
-    environment:
-      - AUTH=yes
-      - MONGODB_ADMIN_USER=admin
-      - MONGODB_ADMIN_PASS=admin123
-      - MONGODB_APPLICATION_DATABASE=${MONGODB_DATABASE}
-      - MONGODB_APPLICATION_USER=${MONGODB_USERNAME}
-      - MONGODB_APPLICATION_PASS=${MONGODB_PASSWORD}
-      - REPL_SET=rs0
+    image: mongo:latest
+    command: "mongod --replSet rs0"
     ports:
       - "27017:27017"
