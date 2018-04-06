@@ -14,6 +14,15 @@ function _mongo() {
 EOF
 }
 
+function _prepare_mongo() {
+    mongod --host ${mongo} --port ${mongoport} --replSet rs0
+    sleep 10
+    mongo --host ${mongo} --port ${mongoport} --eval 'rs.initiate()'
+    sleep 10
+}
+
+_prepare_mongo
+
 is_master_result="false"
 expected_result="true"
 
