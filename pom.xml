@@ -10,6 +10,8 @@
 	<modules>
 		<module>cd-query</module>
 		<module>cd-service</module>
+		<module>cd-discovery</module>
+		<module>cd-gateway</module>
 	</modules>
 
 	<packaging>pom</packaging>
