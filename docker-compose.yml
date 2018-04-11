@@ -1,6 +1,16 @@
 version: '3.3'
 
 services:
+  contact-discovery-gateway:
+    image: contact-discovery-gateway:latest
+    ports:
+      - "8761:8761"
+
+  contact-discovery-discovery:
+    image: contact-discovery-discovery:latest
+    ports:
+      - "8765:8765"
+
   contact-discovery-query:
     image: contact-discovery-query:latest
     depends_on:
