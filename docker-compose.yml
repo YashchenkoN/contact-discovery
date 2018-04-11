@@ -1,15 +1,21 @@
 version: '3.3'
 
 services:
-  contact-discovery:
-    image: contact-discovery:latest
+  contact-discovery-query:
+    image: contact-discovery-query:latest
     depends_on:
       - elasticsearch
       - mongo
     environment:
       - WAIT_HOSTS=elasticsearch:9200,mongo:27017
-    ports:
-      - "8080:8080"
+
+  contact-discovery-service:
+    image: contact-discovery-service:latest
+    depends_on:
+      - elasticsearch
+      - mongo
+    environment:
+      - WAIT_HOSTS=elasticsearch:9200,mongo:27017
 
   elasticsearch:
     image: elasticsearch:latest

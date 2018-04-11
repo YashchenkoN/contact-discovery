@@ -1,13 +1,13 @@
-package io.contactdiscovery.server;
+package io.contactdiscovery.service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ContactDiscoveryApplication {
+public class CDServiceApplication {
 
 	public static void main(String[] args) {
 		System.setProperty("es.set.netty.runtime.available.processors", "0");
-		SpringApplication.run(ContactDiscoveryApplication.class, args);
+		SpringApplication.run(CDServiceApplication.class, args);
 	}
 }
