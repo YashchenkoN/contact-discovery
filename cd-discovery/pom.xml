@@ -11,6 +11,13 @@
     <artifactId>cd-discovery</artifactId>
     <modelVersion>4.0.0</modelVersion>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-netflix-eureka-server</artifactId>
+        </dependency>
+    </dependencies>
+
     <build>
         <finalName>contact-discovery-discovery</finalName>
         <plugins>
