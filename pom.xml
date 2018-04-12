@@ -12,6 +12,7 @@
 		<module>cd-service</module>
 		<module>cd-discovery</module>
 		<module>cd-gateway</module>
+		<module>cd-config</module>
 	</modules>
 
 	<packaging>pom</packaging>
