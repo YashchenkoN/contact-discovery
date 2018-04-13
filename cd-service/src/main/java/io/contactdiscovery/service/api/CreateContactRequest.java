@@ -1,27 +1,19 @@
-package io.contactdiscovery.service;
+package io.contactdiscovery.service.api;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import javax.validation.constraints.NotEmpty;
+
+import io.contactdiscovery.service.entity.Contact;
 
 /**
  * @author Mykola Yashchenko
  */
-@Document
-public class Contact {
-    @Id
-    private String id;
+public class CreateContactRequest {
+    @NotEmpty
     private String number;
+    @NotEmpty
     private String fistName;
+    @NotEmpty
     private String lastName;
-    private String fullName;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getNumber() {
         return number;
@@ -47,11 +39,12 @@ public class Contact {
         this.lastName = lastName;
     }
 
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public Contact toContact() {
+        final Contact contact = new Contact();
+        contact.setNumber(number);
+        contact.setFistName(fistName);
+        contact.setLastName(lastName);
+        contact.setFullName(fistName + " " + lastName);
+        return contact;
     }
 }
