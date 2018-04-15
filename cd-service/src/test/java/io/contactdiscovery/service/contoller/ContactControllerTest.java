@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureWebTestClient
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = ContactDiscoveryServiceApplication.class)
-public class PersonControllerTest {
+public class ContactControllerTest {
 
     @Autowired
     private WebTestClient webTestClient;

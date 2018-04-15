@@ -30,4 +30,9 @@ public class ContactServiceImpl implements ContactService {
         return contactRepository.insert(contact)
                 .map(Contact::getId);
     }
+
+    @Override
+    public Mono<Void> delete(final String id) {
+        return contactRepository.deleteById(id);
+    }
 }
