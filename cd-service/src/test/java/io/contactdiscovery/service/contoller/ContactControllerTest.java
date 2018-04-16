@@ -44,6 +44,14 @@ public class ContactControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private static Stream<Arguments> emptyFieldsProvider() {
+        return Stream.of(
+                Arguments.of("", UUID.randomUUID().toString(), UUID.randomUUID().toString()),
+                Arguments.of(UUID.randomUUID().toString(), "", UUID.randomUUID().toString()),
+                Arguments.of(UUID.randomUUID().toString(), UUID.randomUUID().toString(), "")
+        );
+    }
+
     @Test
     public void shouldCreateContact() {
         final CreateContactRequest request = new CreateContactRequest();
@@ -91,14 +99,36 @@ public class ContactControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromObject(request))
                 .exchange()
-                .expectStatus().isBadRequest();
+                .expectStatus().isBadRequest()
+                .expectBody()
+                .jsonPath("$.status").isEqualTo(400)
+                .jsonPath("$.error").isEqualTo("Bad Request");
     }
 
-    private static Stream<Arguments> emptyFieldsProvider() {
-        return Stream.of(
-                Arguments.of("", UUID.randomUUID().toString(), UUID.randomUUID().toString()),
-                Arguments.of(UUID.randomUUID().toString(), "", UUID.randomUUID().toString()),
-                Arguments.of(UUID.randomUUID().toString(), UUID.randomUUID().toString(), "")
-        );
+    @Test
+    public void shouldDeleteContact() {
+        final String id = "1";
+
+        webTestClient.delete()
+                .uri("/contacts/{id}", id)
+                .exchange()
+                .expectStatus().isNoContent()
+                .expectBody().isEmpty();
+
+        final Contact contact = contactRepository.findById(id).block();
+        assertThat(contact).isNull();
+    }
+
+    @Test
+    public void shouldReturnErrorIfContactDoesNotExist() {
+        final String id = UUID.randomUUID().toString();
+
+        webTestClient.delete()
+                .uri("/contacts/{id}", id)
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody()
+                .jsonPath("$.status").isEqualTo(404)
+                .jsonPath("$.error").isEqualTo("Not Found");
     }
 }

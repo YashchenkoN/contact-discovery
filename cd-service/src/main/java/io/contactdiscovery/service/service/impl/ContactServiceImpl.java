@@ -2,7 +2,9 @@ package io.contactdiscovery.service.service.impl;
 
 import java.util.UUID;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import io.contactdiscovery.service.api.CreateContactRequest;
 import io.contactdiscovery.service.entity.Contact;
@@ -33,6 +35,8 @@ public class ContactServiceImpl implements ContactService {
 
     @Override
     public Mono<Void> delete(final String id) {
-        return contactRepository.deleteById(id);
+        return contactRepository.findById(id)
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
+                .flatMap(contactRepository::delete);
     }
 }
