@@ -2,8 +2,10 @@ package io.contactdiscovery.query;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
 @SpringBootApplication
+@EnableElasticsearchRepositories(basePackages = "io.contactdiscovery.query.repository")
 public class CDQueryApplication {
 
 	public static void main(String[] args) {
