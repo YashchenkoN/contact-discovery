@@ -5,12 +5,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import io.contactdiscovery.extension.ElasticsearchDockerExtension;
-
 /**
  * @author Mykola Yashchenko
  */
-@ExtendWith({ElasticsearchDockerExtension.class, SpringExtension.class})
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = ContactDiscoveryQueryApplication.class)
 public class ContactDiscoveryQueryApplicationTest {
 
