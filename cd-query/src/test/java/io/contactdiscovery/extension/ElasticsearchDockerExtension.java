@@ -1,5 +1,10 @@
 package io.contactdiscovery.extension;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.nio.channels.SocketChannel;
+
 import com.spotify.docker.client.DefaultDockerClient;
 import com.spotify.docker.client.DockerClient;
 import com.spotify.docker.client.exceptions.DockerCertificateException;
@@ -30,6 +35,8 @@ public class ElasticsearchDockerExtension implements BeforeAllCallback, AfterAll
 
         final ContainerCreation containerCreation = dockerClient.createContainer(containerConfig);
         dockerClient.startContainer(id = containerCreation.id());
+
+        waitForPort(9300, 1000);
     }
 
     @Override
@@ -47,6 +54,27 @@ public class ElasticsearchDockerExtension implements BeforeAllCallback, AfterAll
             return DefaultDockerClient.fromEnv().build();
         } catch (final DockerCertificateException e) {
             throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    public void waitForPort(int port, long timeoutInMillis) {
+        final SocketAddress address = new InetSocketAddress("localhost", port);
+        long totalWait = 0;
+        while (true) {
+            try {
+                SocketChannel.open(address);
+                return;
+            } catch (final IOException e) {
+                try {
+                    Thread.sleep(100);
+                    totalWait += 100;
+                    if (totalWait > timeoutInMillis) {
+                        throw new IllegalStateException("Timeout while waiting for port " + port);
+                    }
+                } catch (final InterruptedException ie) {
+                    throw new IllegalStateException(ie);
+                }
+            }
         }
     }
 }
