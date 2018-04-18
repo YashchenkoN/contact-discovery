@@ -6,10 +6,10 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 
 @SpringBootApplication
 @EnableElasticsearchRepositories(basePackages = "io.contactdiscovery.query.repository")
-public class CDQueryApplication {
+public class ContactDiscoveryQueryApplication {
 
 	public static void main(String[] args) {
 		System.setProperty("es.set.netty.runtime.available.processors", "0");
-		SpringApplication.run(CDQueryApplication.class, args);
+		SpringApplication.run(ContactDiscoveryQueryApplication.class, args);
 	}
 }

@@ -22,9 +22,9 @@
             <artifactId>spring-cloud-starter-config</artifactId>
         </dependency>
         <dependency>
-            <groupId>pl.allegro.tech</groupId>
-            <artifactId>embedded-elasticsearch</artifactId>
-            <version>2.5.0</version>
+            <groupId>com.spotify</groupId>
+            <artifactId>docker-client</artifactId>
+            <version>8.11.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
