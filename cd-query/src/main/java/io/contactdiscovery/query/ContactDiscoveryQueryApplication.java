@@ -8,7 +8,7 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 @EnableElasticsearchRepositories(basePackages = "io.contactdiscovery.query.repository")
 public class ContactDiscoveryQueryApplication {
 
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		System.setProperty("es.set.netty.runtime.available.processors", "0");
 		SpringApplication.run(ContactDiscoveryQueryApplication.class, args);
 	}

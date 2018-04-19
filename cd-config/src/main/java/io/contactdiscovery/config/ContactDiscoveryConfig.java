@@ -11,7 +11,7 @@ import org.springframework.cloud.config.server.EnableConfigServer;
 @SpringBootApplication
 public class ContactDiscoveryConfig {
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         SpringApplication.run(ContactDiscoveryConfig.class, args);
     }
 }
