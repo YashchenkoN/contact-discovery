@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 /**
  * @author Mykola Yashchenko
  */
-@Document
+@Document(collection = "contacts")
 public class Contact {
     @Id
     private String id;

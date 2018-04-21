@@ -6,7 +6,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 /**
  * @author Mykola Yashchenko
  */
-@Document(indexName = "contacts", type = "contact")
+@Document(indexName = "contacts", type = "contacts")
 public class Contact {
     @Id
     private String id;
