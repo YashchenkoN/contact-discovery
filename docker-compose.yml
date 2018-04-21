@@ -7,7 +7,7 @@ services:
   cd-gateway:
     image: cd-gateway:latest
     ports:
-      - "8761:8761"
+      - "8080:8761"
 
   cd-discovery:
     image: cd-discovery:latest
