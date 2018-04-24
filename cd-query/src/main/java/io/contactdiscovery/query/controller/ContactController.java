@@ -1,6 +1,6 @@
 package io.contactdiscovery.query.controller;
 
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,7 +24,9 @@ public class ContactController {
     }
 
     @GetMapping
-    public Flux<Contact> findContacts(@RequestParam("fullName") final String fullName, final Pageable pageable) {
-        return contactService.findContacts(fullName, pageable);
+    public Flux<Contact> findContacts(@RequestParam("fullName") final String fullName,
+                                      @RequestParam(value = "page", defaultValue = "1") final Integer page,
+                                      @RequestParam(value = "size", defaultValue = "30") final Integer size) {
+        return contactService.findContacts(fullName, PageRequest.of(page, size));
     }
 }
