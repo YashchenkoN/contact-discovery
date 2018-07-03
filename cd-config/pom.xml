@@ -19,7 +19,7 @@
     </dependencies>
 
     <build>
-        <finalName>cd-discovery</finalName>
+        <finalName>cd-config</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

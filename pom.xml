@@ -157,7 +157,7 @@
 								<attributes>
 									<snippets>${project.build.directory}/snippets</snippets>
 								</attributes>
-								<sourceDirectory>src/docs/asciidocs</sourceDirectory>
+								<sourceDirectory>${project.basedir}/src/docs/asciidocs</sourceDirectory>
 								<outputDirectory>target/generated-docs</outputDirectory>
 							</configuration>
 						</execution>
@@ -166,10 +166,10 @@
 				<plugin>
 					<groupId>com.spotify</groupId>
 					<artifactId>docker-maven-plugin</artifactId>
-					<version>1.0.0</version>
+					<version>1.1.1</version>
 					<configuration>
 						<imageName>${project.build.finalName}</imageName>
-						<dockerDirectory>src/main/docker</dockerDirectory>
+						<dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>
 						<imageTags>
 							<imageTag>${project.version}</imageTag>
 							<imageTag>latest</imageTag>

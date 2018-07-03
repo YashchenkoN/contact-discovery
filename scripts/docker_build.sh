@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+mvn clean install
+
+if [[ "$?" -ne 0 ]] ; then
+    echo 'Maven build failed';
+    exit
+fi
+
+mvn docker:build -pl cd-config,cd-discovery,cd-gateway,cd-query,cd-service
+
+if [[ "$?" -ne 0 ]] ; then
+    echo 'Maven docker build failed';
+    exit
+fi
