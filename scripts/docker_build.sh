@@ -7,7 +7,7 @@ if [[ "$?" -ne 0 ]] ; then
     exit
 fi
 
-mvn docker:build -pl cd-config,cd-discovery,cd-gateway,cd-query,cd-service
+mvn docker:build -pl cd-config,cd-discovery,cd-gateway,cd-query,cd-service,cd-otp-service
 
 if [[ "$?" -ne 0 ]] ; then
     echo 'Maven docker build failed';

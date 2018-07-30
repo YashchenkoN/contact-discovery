@@ -20,7 +20,7 @@
     </dependencies>
 
     <build>
-        <finalName>cd-service</finalName>
+        <finalName>cd-otp-service</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

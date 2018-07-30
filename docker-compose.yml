@@ -23,12 +23,16 @@ services:
       - WAIT_HOSTS=elasticsearch:9200,mongo:27017
 
   cd-service:
-    image: contact-discovery-service:latest
+    image: cd-service:latest
     depends_on:
       - elasticsearch
       - mongo
+      - cd-otp-service
     environment:
       - WAIT_HOSTS=elasticsearch:9200,mongo:27017
+
+  cd-otp-service:
+    image: cd-otp-service:latest
 
   elasticsearch:
     image: elasticsearch:latest
