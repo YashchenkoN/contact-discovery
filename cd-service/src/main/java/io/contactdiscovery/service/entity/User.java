@@ -11,12 +11,10 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@Document(collection = "contacts")
-public class Contact {
+@Document(collection = "users")
+public class User {
     @Id
     private String id;
-    private String number;
-    private String fistName;
-    private String lastName;
-    private String fullName;
+    private String phoneNumber;
+    private UserStatus status;
 }

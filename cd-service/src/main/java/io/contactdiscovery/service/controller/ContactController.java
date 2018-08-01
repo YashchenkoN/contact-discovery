@@ -13,16 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 import io.contactdiscovery.service.api.CreateContactRequest;
 import io.contactdiscovery.service.api.IdRef;
 import io.contactdiscovery.service.service.ContactService;
+import lombok.AllArgsConstructor;
 import reactor.core.publisher.Mono;
 
 @RestController
+@AllArgsConstructor
 public class ContactController {
 
     private final ContactService contactService;
-
-    public ContactController(final ContactService contactService) {
-        this.contactService = contactService;
-    }
 
     @PostMapping("/contacts")
     public Mono<IdRef> create(@RequestBody @Valid final Mono<CreateContactRequest> request) {

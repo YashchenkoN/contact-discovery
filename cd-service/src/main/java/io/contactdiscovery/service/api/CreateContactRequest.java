@@ -3,10 +3,14 @@ package io.contactdiscovery.service.api;
 import javax.validation.constraints.NotEmpty;
 
 import io.contactdiscovery.service.entity.Contact;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author Mykola Yashchenko
  */
+@Getter
+@Setter
 public class CreateContactRequest {
     @NotEmpty
     private String number;
@@ -14,30 +18,6 @@ public class CreateContactRequest {
     private String fistName;
     @NotEmpty
     private String lastName;
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
-    }
-
-    public String getFistName() {
-        return fistName;
-    }
-
-    public void setFistName(String fistName) {
-        this.fistName = fistName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
 
     public Contact toContact() {
         final Contact contact = new Contact();
