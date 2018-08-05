@@ -1,7 +1,5 @@
 package io.contactdiscovery.service.service.impl;
 
-import java.util.UUID;
-
 import org.springframework.stereotype.Service;
 
 import io.contactdiscovery.service.api.RegisterUserRequest;
@@ -24,10 +22,9 @@ public class DeviceServiceImpl implements UserService {
     @Override
     public Mono<String> register(final RegisterUserRequest request) {
         final User user = request.toUser();
-        user.setId(UUID.randomUUID().toString());
         user.setStatus(UserStatus.NOT_ACTIVATED);
 
-        return userRepository.insert(user)
+        return userRepository.save(user)
                 .map(User::getId);
     }
 }
