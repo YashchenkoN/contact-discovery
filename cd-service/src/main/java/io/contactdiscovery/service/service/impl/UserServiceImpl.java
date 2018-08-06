@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono;
  */
 @Service
 @AllArgsConstructor
-public class DeviceServiceImpl implements UserService {
+public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
 
