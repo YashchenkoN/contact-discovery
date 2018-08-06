@@ -24,7 +24,8 @@ public class DeviceServiceImpl implements UserService {
         final User user = request.toUser();
         user.setStatus(UserStatus.NOT_ACTIVATED);
 
-        return userRepository.save(user)
+        return userRepository.deleteByPhoneNumber(request.getPhoneNumber())
+                .then(userRepository.save(user))
                 .map(User::getId);
     }
 }

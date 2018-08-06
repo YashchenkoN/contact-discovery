@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,18 @@ public class UserControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @BeforeAll
+    public static void prepareMongo(@Autowired final UserRepository userRepository) {
+        userRepository.save(user("+380955151515")).block();
+    }
+
+    private static User user(final String phoneNumber) {
+        final User user = new User();
+        user.setPhoneNumber(phoneNumber);
+        user.setStatus(UserStatus.ACTIVATED);
+        return user;
+    }
 
     @Test
     public void shouldCreateContact() {
@@ -85,5 +98,40 @@ public class UserControllerTest {
                 .expectBody()
                 .jsonPath("$.status").isEqualTo(400)
                 .jsonPath("$.error").isEqualTo("Bad Request");
+    }
+
+    @Test
+    public void shouldReplaceExistingNumber() {
+        final RegisterUserRequest request = new RegisterUserRequest();
+        request.setPhoneNumber("+380955151515");
+
+        final User oldUser = userRepository.findByPhoneNumber(request.getPhoneNumber()).block();
+        assertThat(oldUser).isNotNull();
+
+        webTestClient.post()
+                .uri("/users")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromObject(request))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody().jsonPath("$.id").isNotEmpty()
+                .consumeWith(result -> {
+                    final var responseBody = result.getResponseBody();
+                    try {
+                        final IdRef idRef = objectMapper.readValue(new String(responseBody), IdRef.class);
+                        assertThat(idRef).isNotNull();
+
+                        final User user = userRepository.findById(idRef.getId()).block();
+                        assertThat(user).isNotNull();
+                        assertThat(user.getId()).isNotEqualTo(oldUser.getId());
+                        assertThat(user.getPhoneNumber()).isEqualTo(request.getPhoneNumber());
+                        assertThat(user.getStatus()).isEqualTo(UserStatus.NOT_ACTIVATED);
+
+                        assertThat(userRepository.findById(oldUser.getId()).block()).isNull();
+                    } catch (final IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
     }
 }
