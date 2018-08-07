@@ -1,5 +1,7 @@
 package io.contactdiscovery.otp.entity;
 
+import java.util.Base64;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -17,4 +19,8 @@ public class DeviceOtp {
     private String id;
     private String deviceId;
     private String seed;
+
+    public String getEncodedSeed() {
+        return Base64.getEncoder().encodeToString(seed.getBytes());
+    }
 }

@@ -1,4 +1,6 @@
-package io.contactdiscovery.otp.api;
+package io.contactdiscovery.service.api.external;
+
+import javax.validation.constraints.NotEmpty;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,6 +14,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class IdRef {
-    private String id;
+public class RegisterDeviceOtpRequest {
+    @NotEmpty
+    private String deviceId;
 }

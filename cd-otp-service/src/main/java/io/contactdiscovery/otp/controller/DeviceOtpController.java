@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.contactdiscovery.otp.api.IdRef;
-import io.contactdiscovery.otp.api.RegisterDeviceOtp;
+import io.contactdiscovery.otp.api.RegisterDeviceOtpResponse;
+import io.contactdiscovery.otp.api.RegisterDeviceOtpRequest;
 import io.contactdiscovery.otp.service.DeviceOtpService;
 import lombok.AllArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -22,8 +22,8 @@ public class DeviceOtpController {
     private final DeviceOtpService deviceOtpService;
 
     @PostMapping
-    public Mono<IdRef> generate(@RequestBody final Mono<RegisterDeviceOtp> request) {
+    public Mono<RegisterDeviceOtpResponse> generate(@RequestBody final Mono<RegisterDeviceOtpRequest> request) {
         return request.flatMap(deviceOtpService::register)
-                .map(IdRef::new);
+                .map(RegisterDeviceOtpResponse::new);
     }
 }

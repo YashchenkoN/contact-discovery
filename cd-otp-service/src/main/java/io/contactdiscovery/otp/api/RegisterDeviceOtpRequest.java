@@ -10,7 +10,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class RegisterDeviceOtp {
+public class RegisterDeviceOtpRequest {
     @NotEmpty
     private String deviceId;
 }

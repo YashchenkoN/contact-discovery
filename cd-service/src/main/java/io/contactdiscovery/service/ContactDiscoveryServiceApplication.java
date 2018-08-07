@@ -8,8 +8,8 @@ import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRep
 @EnableReactiveMongoRepositories
 public class ContactDiscoveryServiceApplication {
 
-	public static void main(final String[] args) {
-		System.setProperty("es.set.netty.runtime.available.processors", "0");
-		SpringApplication.run(ContactDiscoveryServiceApplication.class, args);
-	}
+    public static void main(final String[] args) {
+        System.setProperty("es.set.netty.runtime.available.processors", "0");
+        SpringApplication.run(ContactDiscoveryServiceApplication.class, args);
+    }
 }

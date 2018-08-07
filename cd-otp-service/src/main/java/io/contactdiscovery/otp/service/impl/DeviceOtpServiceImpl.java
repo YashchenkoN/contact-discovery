@@ -1,12 +1,9 @@
 package io.contactdiscovery.otp.service.impl;
 
-import java.util.Objects;
-import java.util.function.Function;
-
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 
-import io.contactdiscovery.otp.api.RegisterDeviceOtp;
+import io.contactdiscovery.otp.api.RegisterDeviceOtpRequest;
 import io.contactdiscovery.otp.entity.DeviceOtp;
 import io.contactdiscovery.otp.repository.DeviceOtpRepository;
 import io.contactdiscovery.otp.service.DeviceOtpService;
@@ -25,7 +22,7 @@ public class DeviceOtpServiceImpl implements DeviceOtpService {
     private final DeviceOtpRepository repository;
 
     @Override
-    public Mono<String> register(final RegisterDeviceOtp request) {
+    public Mono<String> register(final RegisterDeviceOtpRequest request) {
         final DeviceOtp deviceOtp = new DeviceOtp();
         deviceOtp.setDeviceId(request.getDeviceId());
         deviceOtp.setSeed(RandomStringUtils.random(SEED_LENGTH));
@@ -36,6 +33,6 @@ public class DeviceOtpServiceImpl implements DeviceOtpService {
                     return repository.save(d);
                 })
                 .switchIfEmpty(repository.save(deviceOtp))
-                .map(DeviceOtp::getId);
+                .map(DeviceOtp::getEncodedSeed);
     }
 }
