@@ -3,6 +3,7 @@ package io.contactdiscovery.service.service.impl;
 import org.springframework.stereotype.Service;
 
 import io.contactdiscovery.service.api.RegisterUserRequest;
+import io.contactdiscovery.service.client.OtpServiceClient;
 import io.contactdiscovery.service.entity.User;
 import io.contactdiscovery.service.entity.UserStatus;
 import io.contactdiscovery.service.repository.UserRepository;
@@ -18,6 +19,7 @@ import reactor.core.publisher.Mono;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final OtpServiceClient otpServiceClient;
 
     @Override
     public Mono<String> register(final RegisterUserRequest request) {
