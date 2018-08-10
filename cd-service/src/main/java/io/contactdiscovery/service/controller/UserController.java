@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.contactdiscovery.service.api.IdRef;
 import io.contactdiscovery.service.api.RegisterUserRequest;
+import io.contactdiscovery.service.api.RegisterUserResponse;
 import io.contactdiscovery.service.service.UserService;
 import lombok.AllArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -24,9 +24,8 @@ public class UserController {
     private final UserService deviceService;
 
     @PostMapping
-    public Mono<IdRef> register(@RequestBody @Valid final Mono<RegisterUserRequest> request) {
+    public Mono<RegisterUserResponse> register(@RequestBody @Valid final Mono<RegisterUserRequest> request) {
         return request
-                .flatMap(deviceService::register)
-                .map(IdRef::new);
+                .flatMap(deviceService::register);
     }
 }
