@@ -6,10 +6,9 @@ import java.util.UUID;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.client.WireMock;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +29,8 @@ import io.contactdiscovery.service.repository.UserRepository;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -57,17 +53,14 @@ public class UserControllerTest {
     private ObjectMapper objectMapper;
 
     @BeforeAll
-    public static void prepare(@Autowired final UserRepository userRepository,
-                               @Autowired final ObjectMapper objectMapper) throws JsonProcessingException {
-        userRepository.save(user("+380955151515")).block();
-
+    public static void prepare(@Autowired final ObjectMapper objectMapper) throws JsonProcessingException {
         wireMockServer.start();
 
         wireMockServer.stubFor(post(urlEqualTo("/otps"))
-                .withHeader("Content-Type", equalTo("application/json;charset=UTF-8"))
+                .withHeader("Content-Type", equalTo("application/json"))
                 .willReturn(aResponse()
                         .withStatus(200)
-                        .withHeader("Content-Type", "application/octet-stream")
+                        .withHeader("Content-Type", "application/json")
                         .withBody(objectMapper.writeValueAsBytes(new RegisterDeviceOtpResponse(UUID.randomUUID().toString())))
                 )
         );
@@ -81,10 +74,11 @@ public class UserControllerTest {
     }
 
     @Test
-    @Disabled
     public void shouldCreateContact() {
+        final String phoneNumber = "+380" + RandomStringUtils.randomNumeric(9);
+
         final RegisterUserRequest request = new RegisterUserRequest();
-        request.setPhoneNumber("+380955511111");
+        request.setPhoneNumber(phoneNumber);
 
         webTestClient.post()
                 .uri("/users")
@@ -129,10 +123,12 @@ public class UserControllerTest {
     }
 
     @Test
-    @Disabled
     public void shouldReplaceExistingNumber() {
+        final String phoneNumber = "+380" + RandomStringUtils.randomNumeric(9);
+        userRepository.save(user(phoneNumber)).block();
+
         final RegisterUserRequest request = new RegisterUserRequest();
-        request.setPhoneNumber("+380955151515");
+        request.setPhoneNumber(phoneNumber);
 
         final User oldUser = userRepository.findByPhoneNumber(request.getPhoneNumber()).block();
         assertThat(oldUser).isNotNull();

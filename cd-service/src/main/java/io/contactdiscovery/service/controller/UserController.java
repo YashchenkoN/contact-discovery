@@ -25,7 +25,6 @@ public class UserController {
 
     @PostMapping
     public Mono<RegisterUserResponse> register(@RequestBody @Valid final Mono<RegisterUserRequest> request) {
-        return request
-                .flatMap(deviceService::register);
+        return request.flatMap(deviceService::register);
     }
 }
