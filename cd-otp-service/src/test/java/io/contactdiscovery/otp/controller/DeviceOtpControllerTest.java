@@ -1,12 +1,9 @@
 package io.contactdiscovery.otp.controller;
 
-import java.io.IOException;
 import java.util.Base64;
 import java.util.UUID;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.junit.jupiter.api.BeforeAll;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +15,6 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 
 import io.contactdiscovery.otp.ContactDiscoveryOtpServiceApplication;
-import io.contactdiscovery.otp.api.RegisterDeviceOtpResponse;
 import io.contactdiscovery.otp.api.RegisterDeviceOtpRequest;
 import io.contactdiscovery.otp.entity.DeviceOtp;
 import io.contactdiscovery.otp.repository.DeviceOtpRepository;
@@ -37,15 +33,7 @@ public class DeviceOtpControllerTest {
     private WebTestClient webTestClient;
 
     @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
     private DeviceOtpRepository deviceOtpRepository;
-
-    @BeforeAll
-    public static void prepareMongo(@Autowired final DeviceOtpRepository deviceOtpRepository) {
-        deviceOtpRepository.save(deviceOtp("1")).block();
-    }
 
     private static DeviceOtp deviceOtp(final String deviceId) {
         final DeviceOtp deviceOtp = new DeviceOtp();
@@ -66,29 +54,25 @@ public class DeviceOtpControllerTest {
                 .body(BodyInserters.fromObject(request))
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody().jsonPath("$.seed").isNotEmpty()
+                .expectBody()
                 .consumeWith(result -> {
-                    final var responseBody = result.getResponseBody();
-                    try {
-                        final RegisterDeviceOtpResponse idRef = objectMapper.readValue(new String(responseBody), RegisterDeviceOtpResponse.class);
-                        assertThat(idRef).isNotNull();
-
-                        final DeviceOtp deviceOtp = deviceOtpRepository.findByDeviceId(request.getDeviceId()).block();
-                        assertThat(deviceOtp).isNotNull();
-                        assertThat(deviceOtp.getDeviceId()).isEqualTo(request.getDeviceId());
-                        assertThat(deviceOtp.getSeed()).isEqualTo(new String(Base64.getDecoder().decode(idRef.getSeed())));
-                    } catch (final IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                    final DeviceOtp deviceOtp = deviceOtpRepository.findByDeviceId(request.getDeviceId()).block();
+                    assertThat(deviceOtp).isNotNull();
+                    assertThat(deviceOtp.getDeviceId()).isEqualTo(request.getDeviceId());
+                    assertThat(deviceOtp.getSeed()).isNotEmpty();
                 });
     }
 
     @Test
     public void shouldRegenerateOtp() {
-        final RegisterDeviceOtpRequest request = new RegisterDeviceOtpRequest();
-        request.setDeviceId("1");
+        final String deviceId = RandomStringUtils.randomNumeric(10);
 
-        final DeviceOtp oldDeviceOtp = deviceOtpRepository.findByDeviceId("1").block();
+        deviceOtpRepository.save(deviceOtp(deviceId)).block();
+
+        final RegisterDeviceOtpRequest request = new RegisterDeviceOtpRequest();
+        request.setDeviceId(deviceId);
+
+        final DeviceOtp oldDeviceOtp = deviceOtpRepository.findByDeviceId(deviceId).block();
         assertThat(oldDeviceOtp).isNotNull();
         assertThat(oldDeviceOtp.getDeviceId()).isEqualTo(request.getDeviceId());
         assertThat(oldDeviceOtp.getSeed()).isNotBlank();
@@ -100,21 +84,13 @@ public class DeviceOtpControllerTest {
                 .body(BodyInserters.fromObject(request))
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody().jsonPath("$.seed").isNotEmpty()
+                .expectBody()
                 .consumeWith(result -> {
-                    final var responseBody = result.getResponseBody();
-                    try {
-                        final RegisterDeviceOtpResponse idRef = objectMapper.readValue(new String(responseBody), RegisterDeviceOtpResponse.class);
-                        assertThat(idRef).isNotNull();
-
-                        final DeviceOtp deviceOtp = deviceOtpRepository.findByDeviceId("1").block();
-                        assertThat(deviceOtp).isNotNull();
-                        assertThat(deviceOtp.getId()).isEqualTo(oldDeviceOtp.getId());
-                        assertThat(deviceOtp.getDeviceId()).isEqualTo(request.getDeviceId());
-                        assertThat(deviceOtp.getSeed()).isNotEqualTo(new String(Base64.getDecoder().decode(oldDeviceOtp.getSeed())));
-                    } catch (final IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                    final DeviceOtp deviceOtp = deviceOtpRepository.findByDeviceId(request.getDeviceId()).block();
+                    assertThat(deviceOtp).isNotNull();
+                    assertThat(deviceOtp.getId()).isEqualTo(oldDeviceOtp.getId());
+                    assertThat(deviceOtp.getDeviceId()).isEqualTo(request.getDeviceId());
+                    assertThat(deviceOtp.getSeed()).isNotEqualTo(new String(Base64.getDecoder().decode(oldDeviceOtp.getSeed())));
                 });
     }
 }

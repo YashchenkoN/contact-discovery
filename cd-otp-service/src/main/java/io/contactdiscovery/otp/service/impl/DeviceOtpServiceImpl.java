@@ -22,7 +22,7 @@ public class DeviceOtpServiceImpl implements DeviceOtpService {
     private final DeviceOtpRepository repository;
 
     @Override
-    public Mono<String> register(final RegisterDeviceOtpRequest request) {
+    public Mono<Void> register(final RegisterDeviceOtpRequest request) {
         final DeviceOtp deviceOtp = new DeviceOtp();
         deviceOtp.setDeviceId(request.getDeviceId());
         deviceOtp.setSeed(RandomStringUtils.random(SEED_LENGTH));
@@ -33,6 +33,6 @@ public class DeviceOtpServiceImpl implements DeviceOtpService {
                     return repository.save(d);
                 })
                 .switchIfEmpty(repository.save(deviceOtp))
-                .map(DeviceOtp::getEncodedSeed);
+                .then(Mono.empty());
     }
 }

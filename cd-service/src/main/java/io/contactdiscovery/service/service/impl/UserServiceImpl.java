@@ -31,7 +31,9 @@ public class UserServiceImpl implements UserService {
         return userRepository.deleteByPhoneNumber(request.getPhoneNumber())
                 .then(userRepository.save(user))
                 .map(User::getId)
-                .flatMap(userId -> otpServiceClient.register(new RegisterDeviceOtpRequest(request.getPhoneNumber()))
-                        .map(res -> new RegisterUserResponse(userId, res.getSeed())));
+                .flatMap(userId ->
+                        otpServiceClient.register(new RegisterDeviceOtpRequest(request.getPhoneNumber()))
+                                .thenReturn(new RegisterUserResponse(userId))
+                );
     }
 }

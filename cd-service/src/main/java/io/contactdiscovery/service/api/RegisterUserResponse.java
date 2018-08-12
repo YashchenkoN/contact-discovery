@@ -10,5 +10,4 @@ import lombok.Getter;
 @AllArgsConstructor
 public class RegisterUserResponse {
     private String id;
-    private String seed;
 }

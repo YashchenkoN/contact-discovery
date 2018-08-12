@@ -7,5 +7,5 @@ import reactor.core.publisher.Mono;
  * @author Mykola Yashchenko
  */
 public interface DeviceOtpService {
-    Mono<String> register(RegisterDeviceOtpRequest request);
+    Mono<Void> register(RegisterDeviceOtpRequest request);
 }

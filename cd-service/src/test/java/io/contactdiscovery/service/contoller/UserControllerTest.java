@@ -22,7 +22,6 @@ import org.springframework.web.reactive.function.BodyInserters;
 import io.contactdiscovery.service.ContactDiscoveryServiceApplication;
 import io.contactdiscovery.service.api.IdRef;
 import io.contactdiscovery.service.api.RegisterUserRequest;
-import io.contactdiscovery.service.api.external.RegisterDeviceOtpResponse;
 import io.contactdiscovery.service.entity.User;
 import io.contactdiscovery.service.entity.UserStatus;
 import io.contactdiscovery.service.repository.UserRepository;
@@ -53,15 +52,15 @@ public class UserControllerTest {
     private ObjectMapper objectMapper;
 
     @BeforeAll
-    public static void prepare(@Autowired final ObjectMapper objectMapper) throws JsonProcessingException {
+    public static void prepare() {
         wireMockServer.start();
 
         wireMockServer.stubFor(post(urlEqualTo("/otps"))
                 .withHeader("Content-Type", equalTo("application/json"))
-                .willReturn(aResponse()
-                        .withStatus(200)
-                        .withHeader("Content-Type", "application/json")
-                        .withBody(objectMapper.writeValueAsBytes(new RegisterDeviceOtpResponse(UUID.randomUUID().toString())))
+                .willReturn(
+                        aResponse()
+                                .withStatus(200)
+                                .withHeader("Content-Type", "application/json")
                 )
         );
     }
