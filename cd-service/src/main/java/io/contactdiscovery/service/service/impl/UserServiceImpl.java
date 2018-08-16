@@ -2,6 +2,7 @@ package io.contactdiscovery.service.service.impl;
 
 import org.springframework.stereotype.Service;
 
+import io.contactdiscovery.service.api.ActivateDeviceRequest;
 import io.contactdiscovery.service.api.RegisterUserRequest;
 import io.contactdiscovery.service.api.RegisterUserResponse;
 import io.contactdiscovery.service.api.external.RegisterDeviceOtpRequest;
@@ -35,5 +36,10 @@ public class UserServiceImpl implements UserService {
                         otpServiceClient.register(new RegisterDeviceOtpRequest(request.getPhoneNumber()))
                                 .thenReturn(new RegisterUserResponse(userId))
                 );
+    }
+
+    @Override
+    public Mono<Void> activate(final String deviceId, final ActivateDeviceRequest request) {
+        return Mono.empty();
     }
 }
