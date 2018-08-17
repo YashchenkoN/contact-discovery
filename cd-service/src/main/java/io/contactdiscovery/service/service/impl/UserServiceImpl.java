@@ -40,6 +40,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Mono<Void> activate(final String deviceId, final ActivateDeviceRequest request) {
-        return Mono.empty();
+        return userRepository.findById(deviceId)
+                .map(u -> {
+                    u.setStatus(UserStatus.ACTIVATED);
+                    return u;
+                })
+                .flatMap(userRepository::insert)
+                .flatMap(u -> Mono.empty());
     }
 }
