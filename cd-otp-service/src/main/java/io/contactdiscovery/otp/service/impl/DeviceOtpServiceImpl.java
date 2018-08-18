@@ -4,6 +4,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 
 import io.contactdiscovery.otp.api.RegisterDeviceOtpRequest;
+import io.contactdiscovery.otp.api.VerifyOtpRequest;
 import io.contactdiscovery.otp.entity.DeviceOtp;
 import io.contactdiscovery.otp.repository.DeviceOtpRepository;
 import io.contactdiscovery.otp.service.DeviceOtpService;
@@ -34,5 +35,10 @@ public class DeviceOtpServiceImpl implements DeviceOtpService {
                 })
                 .switchIfEmpty(repository.save(deviceOtp))
                 .then(Mono.empty());
+    }
+
+    @Override
+    public Mono<Void> verify(VerifyOtpRequest request) {
+        return Mono.empty();
     }
 }

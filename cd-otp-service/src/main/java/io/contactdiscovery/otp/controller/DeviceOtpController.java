@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.contactdiscovery.otp.api.RegisterDeviceOtpRequest;
+import io.contactdiscovery.otp.api.VerifyOtpRequest;
 import io.contactdiscovery.otp.service.DeviceOtpService;
 import lombok.AllArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -23,5 +24,10 @@ public class DeviceOtpController {
     @PostMapping
     public Mono<Void> register(@RequestBody final Mono<RegisterDeviceOtpRequest> request) {
         return request.flatMap(deviceOtpService::register);
+    }
+
+    @PostMapping("/verify")
+    public Mono<Void> verify(@RequestBody final Mono<VerifyOtpRequest> request) {
+        return request.flatMap(deviceOtpService::verify);
     }
 }
