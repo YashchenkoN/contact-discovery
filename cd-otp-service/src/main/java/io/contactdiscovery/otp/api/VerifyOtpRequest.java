@@ -1,5 +1,7 @@
 package io.contactdiscovery.otp.api;
 
+import javax.validation.constraints.NotEmpty;
+
 import lombok.Data;
 
 /**
@@ -7,6 +9,9 @@ import lombok.Data;
  */
 @Data
 public class VerifyOtpRequest {
+    @NotEmpty
     private String deviceId;
+
+    @NotEmpty
     private String otp;
 }

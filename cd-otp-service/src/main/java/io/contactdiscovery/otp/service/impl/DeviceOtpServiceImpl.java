@@ -1,11 +1,14 @@
 package io.contactdiscovery.otp.service.impl;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.jboss.aerogear.security.otp.Totp;
 import org.springframework.stereotype.Service;
 
 import io.contactdiscovery.otp.api.RegisterDeviceOtpRequest;
 import io.contactdiscovery.otp.api.VerifyOtpRequest;
 import io.contactdiscovery.otp.entity.DeviceOtp;
+import io.contactdiscovery.otp.exception.NotFoundException;
+import io.contactdiscovery.otp.exception.OtpVerificationException;
 import io.contactdiscovery.otp.repository.DeviceOtpRepository;
 import io.contactdiscovery.otp.service.DeviceOtpService;
 import lombok.AllArgsConstructor;
@@ -38,7 +41,16 @@ public class DeviceOtpServiceImpl implements DeviceOtpService {
     }
 
     @Override
-    public Mono<Void> verify(VerifyOtpRequest request) {
-        return Mono.empty();
+    public Mono<Void> verify(final VerifyOtpRequest request) {
+        return repository.findByDeviceId(request.getDeviceId())
+                .switchIfEmpty(Mono.error(new NotFoundException()))
+                .flatMap(d -> {
+                    final boolean otpCorrect = new Totp(d.getSeed()).verify(request.getOtp());
+                    if (otpCorrect) {
+                        return Mono.empty();
+                    }
+
+                    return Mono.error(new OtpVerificationException());
+                });
     }
 }
