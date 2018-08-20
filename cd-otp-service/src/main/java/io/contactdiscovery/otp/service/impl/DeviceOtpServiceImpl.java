@@ -38,7 +38,7 @@ public class DeviceOtpServiceImpl implements DeviceOtpService {
                     d.setSeed(RandomStringUtils.random(SEED_LENGTH));
                     return repository.save(d);
                 })
-                .switchIfEmpty(repository.save(deviceOtp))
+                .switchIfEmpty(Mono.defer(() -> repository.save(deviceOtp)))
                 .then(Mono.empty());
     }
 
