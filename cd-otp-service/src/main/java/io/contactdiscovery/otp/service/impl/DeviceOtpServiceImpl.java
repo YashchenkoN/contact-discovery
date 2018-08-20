@@ -2,6 +2,7 @@ package io.contactdiscovery.otp.service.impl;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.jboss.aerogear.security.otp.Totp;
+import org.jboss.aerogear.security.otp.api.Clock;
 import org.springframework.stereotype.Service;
 
 import io.contactdiscovery.otp.api.RegisterDeviceOtpRequest;
@@ -22,6 +23,7 @@ import reactor.core.publisher.Mono;
 public class DeviceOtpServiceImpl implements DeviceOtpService {
 
     private static final int SEED_LENGTH = 40;
+    private static final int PERIOD = 60;
 
     private final DeviceOtpRepository repository;
 
@@ -45,7 +47,8 @@ public class DeviceOtpServiceImpl implements DeviceOtpService {
         return repository.findByDeviceId(request.getDeviceId())
                 .switchIfEmpty(Mono.error(new NotFoundException()))
                 .flatMap(d -> {
-                    final boolean otpCorrect = new Totp(d.getSeed()).verify(request.getOtp());
+                    final boolean otpCorrect = new Totp(d.getSeed(), new Clock(PERIOD))
+                            .verify(request.getOtp());
                     if (otpCorrect) {
                         return Mono.empty();
                     }
