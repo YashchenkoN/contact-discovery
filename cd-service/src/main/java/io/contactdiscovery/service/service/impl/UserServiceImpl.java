@@ -6,6 +6,7 @@ import io.contactdiscovery.service.api.ActivateDeviceRequest;
 import io.contactdiscovery.service.api.RegisterUserRequest;
 import io.contactdiscovery.service.api.RegisterUserResponse;
 import io.contactdiscovery.service.api.external.RegisterDeviceOtpRequest;
+import io.contactdiscovery.service.api.external.VerifyOtpRequest;
 import io.contactdiscovery.service.client.OtpServiceClient;
 import io.contactdiscovery.service.entity.User;
 import io.contactdiscovery.service.entity.UserStatus;
@@ -40,7 +41,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Mono<Void> activate(final String deviceId, final ActivateDeviceRequest request) {
-        return userRepository.findById(deviceId)
+        return otpServiceClient.verify(new VerifyOtpRequest(deviceId, request.getOtp()))
+                .flatMap(r -> userRepository.findById(deviceId))
                 .map(u -> {
                     u.setStatus(UserStatus.ACTIVATED);
                     return u;
