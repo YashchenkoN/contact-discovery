@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
         user.setStatus(UserStatus.NOT_ACTIVATED);
 
         return userRepository.deleteByPhoneNumber(request.getPhoneNumber())
-                .then(userRepository.save(user))
+                .then(Mono.defer(() -> userRepository.save(user)))
                 .map(User::getId)
                 .flatMap(userId ->
                         otpServiceClient.register(new RegisterDeviceOtpRequest(request.getPhoneNumber()))
