@@ -158,4 +158,24 @@ public class UserControllerTest {
                     }
                 });
     }
+
+    @Test
+    public void shouldActivateDevice() {
+
+    }
+
+    @Test
+    public void shouldReturnErrorIfOtpIsIncorrect() {
+
+    }
+
+    @Test
+    public void shouldReturnErrorIfDeviceNotFound() {
+
+    }
+
+    @Test
+    public void shouldReturnErrorIfRequiredFieldIsMissing() {
+
+    }
 }
