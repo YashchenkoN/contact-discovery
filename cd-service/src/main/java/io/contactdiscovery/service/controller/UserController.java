@@ -33,7 +33,7 @@ public class UserController {
 
     @PutMapping("/{id}")
     public Mono<Void> activate(@PathVariable("id") final String deviceId,
-                               @Valid final Mono<ActivateDeviceRequest> request) {
+                               @Valid @RequestBody final Mono<ActivateDeviceRequest> request) {
         return request.flatMap(b -> userService.activate(deviceId, b));
     }
 }

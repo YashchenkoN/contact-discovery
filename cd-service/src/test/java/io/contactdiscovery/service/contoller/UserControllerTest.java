@@ -20,6 +20,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 
 import io.contactdiscovery.service.ContactDiscoveryServiceApplication;
+import io.contactdiscovery.service.api.ActivateDeviceRequest;
 import io.contactdiscovery.service.api.IdRef;
 import io.contactdiscovery.service.api.RegisterUserRequest;
 import io.contactdiscovery.service.entity.User;
@@ -161,21 +162,96 @@ public class UserControllerTest {
 
     @Test
     public void shouldActivateDevice() {
+        wireMockServer.stubFor(post(urlEqualTo("/otps/verify"))
+                .withHeader("Content-Type", equalTo("application/json"))
+                .willReturn(
+                        aResponse()
+                                .withStatus(200)
+                                .withHeader("Content-Type", "application/json")
+                )
+        );
 
+        final String phoneNumber = "+380" + RandomStringUtils.randomNumeric(9);
+        final User user = user(phoneNumber);
+        user.setStatus(UserStatus.NOT_ACTIVATED);
+        userRepository.save(user).block();
+
+        final ActivateDeviceRequest request = new ActivateDeviceRequest();
+        request.setOtp(RandomStringUtils.randomNumeric(9));
+
+        final User oldUser = userRepository.findByPhoneNumber(phoneNumber).block();
+        assertThat(oldUser).isNotNull();
+
+        webTestClient.put()
+                .uri("/users/" + oldUser.getId())
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromObject(request))
+                .exchange()
+                .expectStatus().isOk();
+
+        final User actualUser = userRepository.findByPhoneNumber(oldUser.getPhoneNumber()).block();
+        assertThat(actualUser).isNotNull();
+        assertThat(actualUser.getStatus()).isEqualTo(UserStatus.ACTIVATED);
     }
 
     @Test
     public void shouldReturnErrorIfOtpIsIncorrect() {
+        wireMockServer.stubFor(post(urlEqualTo("/otps/verify"))
+                .withHeader("Content-Type", equalTo("application/json"))
+                .willReturn(
+                        aResponse()
+                                .withBody("{}")
+                                .withStatus(400)
+                                .withHeader("Content-Type", "application/json")
+                )
+        );
 
+        final String phoneNumber = "+380" + RandomStringUtils.randomNumeric(9);
+        final User user = user(phoneNumber);
+        user.setStatus(UserStatus.NOT_ACTIVATED);
+        userRepository.save(user).block();
+
+        final ActivateDeviceRequest request = new ActivateDeviceRequest();
+        request.setOtp(RandomStringUtils.randomNumeric(9));
+
+        final User oldUser = userRepository.findByPhoneNumber(phoneNumber).block();
+        assertThat(oldUser).isNotNull();
+
+        webTestClient.put()
+                .uri("/users/" + oldUser.getId())
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromObject(request))
+                .exchange()
+                .expectStatus().isBadRequest();
     }
 
     @Test
     public void shouldReturnErrorIfDeviceNotFound() {
+        final ActivateDeviceRequest request = new ActivateDeviceRequest();
+        request.setOtp(RandomStringUtils.randomNumeric(9));
 
+        webTestClient.put()
+                .uri("/users/" + UUID.randomUUID().toString())
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromObject(request))
+                .exchange()
+                .expectStatus().isNotFound();
     }
 
     @Test
     public void shouldReturnErrorIfRequiredFieldIsMissing() {
+        final ActivateDeviceRequest request = new ActivateDeviceRequest();
+        request.setOtp("");
 
+        webTestClient.put()
+                .uri("/users/" + UUID.randomUUID().toString())
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromObject(request))
+                .exchange()
+                .expectStatus().isBadRequest();
     }
 }

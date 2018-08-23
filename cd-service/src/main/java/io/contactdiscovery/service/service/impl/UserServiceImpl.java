@@ -10,6 +10,8 @@ import io.contactdiscovery.service.api.external.VerifyOtpRequest;
 import io.contactdiscovery.service.client.OtpServiceClient;
 import io.contactdiscovery.service.entity.User;
 import io.contactdiscovery.service.entity.UserStatus;
+import io.contactdiscovery.service.exception.NotFoundException;
+import io.contactdiscovery.service.exception.OtpVerificationFailed;
 import io.contactdiscovery.service.repository.UserRepository;
 import io.contactdiscovery.service.service.UserService;
 import lombok.AllArgsConstructor;
@@ -41,13 +43,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Mono<Void> activate(final String deviceId, final ActivateDeviceRequest request) {
-        return otpServiceClient.verify(new VerifyOtpRequest(deviceId, request.getOtp()))
-                .flatMap(r -> userRepository.findById(deviceId))
-                .map(u -> {
-                    u.setStatus(UserStatus.ACTIVATED);
-                    return u;
-                })
-                .flatMap(userRepository::insert)
-                .flatMap(u -> Mono.empty());
+        return userRepository.findById(deviceId)
+                .switchIfEmpty(Mono.error(new NotFoundException()))
+                .flatMap(u ->
+                        otpServiceClient
+                                .verify(new VerifyOtpRequest(u.getPhoneNumber(), request.getOtp()))
+                                .onErrorResume(ex -> Mono.error(new OtpVerificationFailed()))
+                                .then(Mono.defer(() -> Mono.just(u)))
+                                .map(r -> {
+                                    r.setStatus(UserStatus.ACTIVATED);
+                                    return r;
+                                })
+                                .flatMap(userRepository::save)
+                                .flatMap($ -> Mono.empty())
+                );
     }
 }
