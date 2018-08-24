@@ -93,4 +93,19 @@ public class DeviceOtpControllerTest {
                     assertThat(deviceOtp.getSeed()).isNotEqualTo(new String(Base64.getDecoder().decode(oldDeviceOtp.getSeed())));
                 });
     }
+
+    @Test
+    public void shouldVerifyOtp() {
+
+    }
+
+    @Test
+    public void shouldReturnErrorOnVerifyIfDeviceNotFound() {
+
+    }
+
+    @Test
+    public void shouldReturnErrorOnVerifyIfOtpIsIncorrect() {
+
+    }
 }
