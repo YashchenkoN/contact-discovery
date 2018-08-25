@@ -2,6 +2,7 @@ package io.contactdiscovery.otp.service.impl;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.jboss.aerogear.security.otp.Totp;
+import org.jboss.aerogear.security.otp.api.Base32;
 import org.jboss.aerogear.security.otp.api.Clock;
 import org.springframework.stereotype.Service;
 
@@ -31,11 +32,11 @@ public class DeviceOtpServiceImpl implements DeviceOtpService {
     public Mono<Void> register(final RegisterDeviceOtpRequest request) {
         final DeviceOtp deviceOtp = new DeviceOtp();
         deviceOtp.setDeviceId(request.getDeviceId());
-        deviceOtp.setSeed(RandomStringUtils.random(SEED_LENGTH));
+        deviceOtp.setSeed(Base32.encode(RandomStringUtils.random(SEED_LENGTH).getBytes()));
 
         return repository.findByDeviceId(request.getDeviceId())
                 .flatMap(d -> {
-                    d.setSeed(RandomStringUtils.random(SEED_LENGTH));
+                    d.setSeed(Base32.encode(RandomStringUtils.random(SEED_LENGTH).getBytes()));
                     return repository.save(d);
                 })
                 .switchIfEmpty(Mono.defer(() -> repository.save(deviceOtp)))
