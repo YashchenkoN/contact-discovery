@@ -14,7 +14,8 @@
 		<module>cd-gateway</module>
 		<module>cd-config</module>
         <module>cd-otp-service</module>
-    </modules>
+		<module>cd-auth-service</module>
+	</modules>
 
 	<packaging>pom</packaging>
 
