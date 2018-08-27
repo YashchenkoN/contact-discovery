@@ -4,6 +4,9 @@ services:
   cd-config:
     image: cd-config:latest
 
+  cd-auth-service:
+    image: cd-auth-service:latest
+
   cd-gateway:
     image: cd-gateway:latest
     ports:
